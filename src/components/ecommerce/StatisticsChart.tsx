@@ -1,6 +1,5 @@
 "use client";
-import React,{ useEffect, useState } from "react";
-// import Chart from "react-apexcharts";
+import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import { ApexOptions } from "apexcharts";
 import ChartTab from "../common/ChartTab";
@@ -11,18 +10,26 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-
+// Type untuk data sensor
+type SensorData = {
+  temperature: number;
+  humidity: number;
+  gm: number;
+  co2: number;
+  tm: number;
+  timestamp: string;
+  [key: string]: number | string;
+};
 
 export default function StatisticsChart() {
-  const [rawData, setRawData] = useState<any[]>([]);
+  const [rawData, setRawData] = useState<SensorData[]>([]);
   const [selectedMetric, setSelectedMetric] = useState<string>("temperature");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('http://localhost:3000/raw/filtered');
-        const json = await res.json();
-        // Ambil 10 data terakhir, dari yang paling baru ke lama (dan reverse biar grafiknya urut waktu)
+        const res = await fetch("http://localhost:3000/raw/filtered");
+        const json: SensorData[] = await res.json();
         const recent = json.slice(0, 10).reverse();
         setRawData(recent);
       } catch (err) {
@@ -38,10 +45,10 @@ export default function StatisticsChart() {
 
     const channel = pusher.subscribe("sensor-channel");
 
-    channel.bind("new-data", function (data: any) {
+    channel.bind("new-data", function (data: SensorData) {
       setRawData((prev) => {
         const updated = [...prev, data];
-        return updated.slice(-10); // ambil 15 terakhir
+        return updated.slice(-10);
       });
     });
 
@@ -54,14 +61,9 @@ export default function StatisticsChart() {
   const series = [
     {
       name: selectedMetric,
-      data: rawData.map((item) => item[selectedMetric]),
+      data: rawData.map((item) => item[selectedMetric] as number),
     },
   ];
-
-
-
-
-  
 
   const options: ApexOptions = {
     chart: {
@@ -73,7 +75,6 @@ export default function StatisticsChart() {
     colors: ["#465FFF"],
     stroke: {
       curve: "straight",
-      
     },
     fill: {
       type: "gradient",
@@ -82,8 +83,6 @@ export default function StatisticsChart() {
         opacityTo: 0,
       },
     },
-    
-
     xaxis: {
       categories: rawData.map((item) =>
         new Date(item.timestamp).toLocaleTimeString("id-ID", {
@@ -94,7 +93,6 @@ export default function StatisticsChart() {
       ),
       labels: { style: { fontSize: "12px" } },
     },
-
     yaxis: {
       tickAmount: 5,
       labels: { style: { fontSize: "12px", colors: ["#6B7280"] } },
@@ -108,8 +106,6 @@ export default function StatisticsChart() {
     dataLabels: { enabled: false },
     legend: { show: false },
   };
-
-
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
@@ -125,7 +121,12 @@ export default function StatisticsChart() {
         <ChartTab onChange={(val) => setSelectedMetric(val)} />
       </div>
 
-      <ReactApexChart options={options} series={series} type="area" height={310} />
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="area"
+        height={310}
+      />
     </div>
   );
 }

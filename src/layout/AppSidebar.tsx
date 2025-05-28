@@ -9,10 +9,9 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  PieChartIcon,
   UserCircleIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
+
 
 type NavItem = {
   name: string;

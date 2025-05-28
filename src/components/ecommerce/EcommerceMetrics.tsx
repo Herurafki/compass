@@ -16,33 +16,43 @@ import {
   CheckCircleIcon,
 } from "@/icons";
 
+// 1. Type definition
+interface SensorData {
+  temperature: number;
+  humidity: number;
+  gm: number;
+  co2: number;
+  tm: number;
+  vol: number;
+  timestamp: string;
+}
+
+// 2. Format time helper
+const formatTimestamp = (timestamp: string): string =>
+  new Date(timestamp).toLocaleString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
 export const EcommerceMetrics = () => {
-  const [data, setData] = useState<any>(null);
-  const prevDataRef = useRef<any>(null);
+  const [data, setData] = useState<SensorData | null>(null);
+  const prevDataRef = useRef<SensorData | null>(null);
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
 
-  // Initial fetch + Pusher setup
+  // 3. Fetch + Pusher
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         const res = await fetch("http://localhost:3000/raw/filtered");
-        const json = await res.json();
+        const json: SensorData[] = await res.json();
         const latestData = json[0];
-
         setData(latestData);
-        setLastUpdate(
-          latestData.timestamp
-            ? new Date(latestData.timestamp).toLocaleString("id-ID", {
-                timeZone: "Asia/Jakarta",
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })
-            : null
-        );
+        setLastUpdate(latestData.timestamp ? formatTimestamp(latestData.timestamp) : null);
       } catch (error) {
         console.error("Initial fetch error:", error);
       }
@@ -50,28 +60,15 @@ export const EcommerceMetrics = () => {
 
     fetchInitialData();
 
-    // Pusher real-time update
     const pusher = new Pusher("bc484970cb551cc676b8", {
       cluster: "ap1",
     });
 
     const channel = pusher.subscribe("sensor-channel");
 
-    channel.bind("new-data", (newData: any) => {
+    channel.bind("new-data", (newData: SensorData) => {
       setData(newData);
-      setLastUpdate(
-        newData.timestamp
-          ? new Date(newData.timestamp).toLocaleString("id-ID", {
-              timeZone: "Asia/Jakarta",
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })
-          : null
-      );
+      setLastUpdate(newData.timestamp ? formatTimestamp(newData.timestamp) : null);
     });
 
     return () => {
@@ -80,7 +77,7 @@ export const EcommerceMetrics = () => {
     };
   }, []);
 
-  // Simpan data sebelumnya untuk perbandingan
+  // 4. Simpan data sebelumnya
   useEffect(() => {
     if (data) {
       prevDataRef.current = data;
@@ -89,15 +86,13 @@ export const EcommerceMetrics = () => {
 
   if (!data) return <p className="text-center text-gray-500">Loading...</p>;
 
-  const renderChange = (key: string) => {
+  // 5. Bandingkan perubahan
+  const renderChange = (key: keyof SensorData) => {
     const prev = prevDataRef.current?.[key];
     const current = data[key];
 
-    if (prev == null || current == null){
-      return (
-       null
-      );
-    }
+    if (typeof prev !== "number" || typeof current !== "number") return null;
+
     const diff = current - prev;
     const percentage = prev !== 0 ? ((diff / prev) * 100).toFixed(2) : "0.00";
 
@@ -175,6 +170,7 @@ export const EcommerceMetrics = () => {
           infoText={infoText.vol}
         />
       </div>
+
       {lastUpdate && (
         <div className="text-sm text-right text-dark-500 mt-4">
           Last Update: {lastUpdate}
@@ -184,6 +180,7 @@ export const EcommerceMetrics = () => {
   );
 };
 
+// 6. MetricCard component
 const MetricCard = ({
   icon,
   label,

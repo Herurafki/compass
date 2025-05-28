@@ -1,5 +1,4 @@
-import ThemeTogglerTwo from "@/components/common/ThemeTogglerTwo";
-import { ThemeProvider } from "@/context/ThemeContext";
+
 import Image from "next/image";
 import React from "react";
 import { Metadata } from "next";
@@ -16,7 +15,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative bg-white dark:bg-gray-900">
+    <div className="relative bg-white ">
       
         <div className="flex flex-col lg:flex-row w-full h-screen">
           {/* Kiri: Form Login */}
@@ -40,11 +39,7 @@ export default function AuthLayout({
             />
           </div>
 
-          {/* Theme Toggler */}
-          <div className="fixed bottom-6 right-6 z-50 hidden sm:block">
-            <ThemeTogglerTwo />
-            {/* Tombol toggle tema, hanya muncul di ukuran sm ke atas */}
-          </div>
+          
         </div>
      
     </div>

@@ -1,4 +1,4 @@
-import { Volkhov } from "next/font/google";
+
 
 const infoText: Record<string, string> = {
     temperature: `Suhu Kompos adalah ukuran tingkat panas udara di dalam ruang kompos yang memengaruhi aktivitas mikroba dan proses pengomposan.

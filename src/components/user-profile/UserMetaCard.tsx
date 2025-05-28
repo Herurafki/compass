@@ -9,7 +9,7 @@ import Image from "next/image";
 
 
 export default function UserMetaCard() {
-  const { isOpen, openModal, closeModal } = useModal();
+  const { isOpen,  closeModal } = useModal();
   const [user, setUser] = useState<{
     firstname: string;
     email: string;
