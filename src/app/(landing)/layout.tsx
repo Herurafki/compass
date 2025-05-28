@@ -8,9 +8,11 @@ import { siteDetails } from '@/data/siteDetails';
 
 import "./globals.css";
 
-const manrope = Manrope({ subsets: ['latin'] });
-const sourceSans = Source_Sans_3({ subsets: ['latin'] });
+// Font setup
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
+const sourceSans = Source_Sans_3({ subsets: ['latin'], variable: '--font-sourcesans' });
 
+// Metadata setup
 export const metadata: Metadata = {
   title: siteDetails.metadata.title,
   description: siteDetails.metadata.description,
@@ -45,17 +47,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${manrope.className} ${sourceSans.className} antialiased`}
-      >
-        {siteDetails.googleAnalyticsId && <GoogleAnalytics gaId={siteDetails.googleAnalyticsId} />}
-        <Header /> 
-        <main>
-          {children}
-        </main>
-        <Footer />
-      </body>
-    </html>
+    <div className={`${manrope.variable} ${sourceSans.variable} antialiased`}>
+      {siteDetails.googleAnalyticsId && (
+        <GoogleAnalytics gaId={siteDetails.googleAnalyticsId} />
+      )}
+      <Header />
+      <main>{children}</main>
+      <Footer />
+    </div>
   );
 }

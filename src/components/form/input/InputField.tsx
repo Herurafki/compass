@@ -1,4 +1,7 @@
-import React, { FC } from "react";
+"use client";
+
+import dynamic from 'next/dynamic';
+import React, { FC, useEffect, useState } from "react";
 
 interface InputProps {
   type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
@@ -14,10 +17,13 @@ interface InputProps {
   disabled?: boolean;
   success?: boolean;
   error?: boolean;
-  hint?: string; // Optional hint text
+  value?: string | number;
+  hint?: string;
+  readOnly?: boolean;
 }
 
-const Input: FC<InputProps> = ({
+// Dynamic import dengan disabled SSR untuk menghindari hydration issues
+const DynamicInput: FC<InputProps> = ({
   type = "text",
   id,
   name,
@@ -32,19 +38,51 @@ const Input: FC<InputProps> = ({
   success = false,
   error = false,
   hint,
+  value,
+  readOnly = false,
 }) => {
-  // Determine input styles based on state (disabled, success, error)
-  let inputClasses = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${className}`;
+  const [isMounted, setIsMounted] = useState(false);
+  const [internalValue, setInternalValue] = useState<string | number>(value ?? defaultValue ?? "");
 
-  // Add styles for the different states
-  if (disabled) {
-    inputClasses += ` text-gray-500 border-gray-300 cursor-not-allowed dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700`;
-  } else if (error) {
-    inputClasses += ` text-error-800 border-error-500 focus:ring-3 focus:ring-error-500/10  dark:text-error-400 dark:border-error-500`;
-  } else if (success) {
-    inputClasses += ` text-success-500 border-success-400 focus:ring-success-500/10 focus:border-success-300  dark:text-success-400 dark:border-success-500`;
-  } else {
-    inputClasses += ` bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800`;
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value);
+    }
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInternalValue(e.target.value);
+    onChange?.(e);
+  };
+
+  // Dynamic class computation
+  const getInputClasses = () => {
+    let classes = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${className}`;
+
+    if (disabled) {
+      classes += ` text-gray-500 border-gray-300 cursor-not-allowed dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700`;
+    } else if (error) {
+      classes += ` text-error-800 border-error-500 focus:ring-error-500/10 dark:text-error-400 dark:border-error-500`;
+    } else if (success) {
+      classes += ` text-success-500 border-success-400 focus:ring-success-500/10 focus:border-success-300 dark:text-success-400 dark:border-success-500`;
+    } else {
+      classes += ` bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800`;
+    }
+
+    return classes;
+  };
+
+  if (!isMounted && typeof window === 'undefined') {
+    // Render placeholder selama SSR
+    return (
+      <div className="relative">
+        <div className={`h-11 w-full rounded-lg border ${className}`} />
+      </div>
+    );
   }
 
   return (
@@ -54,16 +92,17 @@ const Input: FC<InputProps> = ({
         id={id}
         name={name}
         placeholder={placeholder}
-        defaultValue={defaultValue}
-        onChange={onChange}
+        value={internalValue}
+        onChange={handleChange}
         min={min}
         max={max}
         step={step}
         disabled={disabled}
-        className={inputClasses}
+        className={getInputClasses()}
+        readOnly={readOnly}
+        suppressHydrationWarning={type === "date" || type === "time"}
       />
 
-      {/* Optional Hint Text */}
       {hint && (
         <p
           className={`mt-1.5 text-xs ${
@@ -80,5 +119,16 @@ const Input: FC<InputProps> = ({
     </div>
   );
 };
+
+// Export dynamic component dengan disabled SSR
+const Input = dynamic(() => Promise.resolve(DynamicInput), {
+  ssr: false,
+
+  loading: () => (
+    <div className="relative">
+      <div className="h-11 w-full rounded-lg border bg-gray-100 dark:bg-gray-800" />
+    </div>
+  )
+});
 
 export default Input;

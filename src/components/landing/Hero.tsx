@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 
 
 import { heroDetails } from '@/data/hero';
+import Link from 'next/link';
 
 const Hero: React.FC = () => {
     return (
@@ -55,6 +56,7 @@ const Hero: React.FC = () => {
                 <button className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-800 transition">
                 Start Monitoring
                 </button>
+                <Link href={'/signup'}></Link>
                 </motion.div>
 
                 <motion.div

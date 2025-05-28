@@ -33,7 +33,7 @@ const Header: React.FC = () => {
                             </li>
                         ))}
                         <li>
-                            <Link href="/login" className="text-black bg-blue-600 hover:bg-blue-800 px-8 py-3 rounded-full transition-colors">
+                            <Link href="/signin" className="text-black bg-blue-600 hover:bg-blue-800 px-8 py-3 rounded-full transition-colors">
                                 Login
                             </Link>
                         </li>
@@ -79,7 +79,7 @@ const Header: React.FC = () => {
                             </li>
                         ))}
                         <li>
-                            <Link href="/login" className="text-black bg-blue-600 hover:bg-blue-800 px-5 py-2 rounded-full block w-fit" onClick={toggleMenu}>
+                            <Link href="/signin" className="text-black bg-blue-600 hover:bg-blue-800 px-5 py-2 rounded-full block w-fit" onClick={toggleMenu}>
                                 Login
                             </Link>
                         </li>

@@ -23,7 +23,7 @@ export default function StatisticsChart() {
         const res = await fetch('http://localhost:3000/raw/filtered');
         const json = await res.json();
         // Ambil 10 data terakhir, dari yang paling baru ke lama (dan reverse biar grafiknya urut waktu)
-        const recent = json.slice(0, 10);
+        const recent = json.slice(0, 10).reverse();
         setRawData(recent);
       } catch (err) {
         console.error("Error fetching data:", err);

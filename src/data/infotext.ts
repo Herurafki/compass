@@ -1,3 +1,5 @@
+import { Volkhov } from "next/font/google";
+
 const infoText: Record<string, string> = {
     temperature: `Suhu Kompos adalah ukuran tingkat panas udara di dalam ruang kompos yang memengaruhi aktivitas mikroba dan proses pengomposan.
 
@@ -24,10 +26,10 @@ const infoText: Record<string, string> = {
 
     tm: "Time Measurement menunjukkan durasi operasional dalam hari, jam, dan menit.",
 
-    dst: `Jarak Sensor ke Kompos adalah jarak antara sensor dan permukaan tumpukan kompos yang menunjukkan tingkat kepenuhan.
+    vol: `Volume adalah jarak antara sensor dan permukaan tumpukan kompos yang mengukur tingkat kepenuhan.
 
-    Jarak kurang dari 10 cm menandakan ruang kompos hampir penuh.
-    Jarak 10 cm atau lebih menandakan masih ada ruang kompos.`,
+    Volume lebih dari 24 Liter menandakan ruang kompos hampir penuh.
+    Volume kurang dari 24 Liter menandakan ruang kompos masih kosong.`,
   };
   
   export default infoText;

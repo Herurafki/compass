@@ -55,10 +55,10 @@ const ChartTab: React.FC<Props> = ({ onChange }) => {
       </button>
 
       <button
-        onClick={() => handleSelect("optionFive", "dst")}
+        onClick={() => handleSelect("optionFive", "vol")}
         className={`px-3 py-2 font-medium w-full rounded-md text-theme-sm hover:text-gray-900 dark:hover:text-white ${getButtonClass("optionFive")}`}
       >
-        Distance
+        Volume
       </button>
 
     </div>

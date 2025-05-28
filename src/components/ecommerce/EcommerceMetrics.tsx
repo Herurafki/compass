@@ -169,10 +169,10 @@ export const EcommerceMetrics = () => {
         />
         <MetricCard
           icon={<DistanceIcon className="w-6 h-6 text-gray-800 dark:text-white/90" />}
-          label="Distance"
-          value={`${data.dst} cm`}
-          badge={renderChange("dst")}
-          infoText={infoText.dst}
+          label="Volume"
+          value={`${data.vol} Liter`}
+          badge={renderChange("vol")}
+          infoText={infoText.vol}
         />
       </div>
       {lastUpdate && (

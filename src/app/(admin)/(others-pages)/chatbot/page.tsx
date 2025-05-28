@@ -1,5 +1,12 @@
 // pages/chatbot.js
 import React from 'react';
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Compass - Chatbot",
+  description:
+    "This is the chatbot page for the compass website. - Compass",
+};
 
 const ChatbotPage = () => {
   return (

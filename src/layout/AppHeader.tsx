@@ -9,16 +9,29 @@ import React, { useState ,useEffect,useRef} from "react";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
-
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
+  useEffect(() => {
+    setIsLargeScreen(window.innerWidth >= 1024);
+  
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
+  
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleToggle = () => {
-    if (window.innerWidth >= 1024) {
+    if (isLargeScreen) {
       toggleSidebar();
     } else {
       toggleMobileSidebar();
     }
   };
+
+ 
 
   const toggleApplicationMenu = () => {
     setApplicationMenuOpen(!isApplicationMenuOpen);
